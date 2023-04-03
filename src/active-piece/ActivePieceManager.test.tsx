@@ -3,16 +3,16 @@ import { act } from "react-dom/test-utils";
 import { createRoot, Root } from "react-dom/client";
 
 import DefaultActivePieceManager from "./ActivePieceManager";
-import { Coordinates } from "src/common/available_pieces";
+import { Coordinates } from "../common/available_pieces";
 
-jest.mock("src/common/available_pieces", () => {
-  const originalModule = jest.requireActual("src/common/available_pieces");
+jest.mock("../common/available_pieces", () => {
+  const originalModule = jest.requireActual("../common/available_pieces");
   return {
     ...originalModule,
     getRandomPiece: jest.fn(),
   };
 });
-const availablePieces = require("src/common/available_pieces");
+const availablePieces = require("../common/available_pieces");
 
 describe("when creating a new piece", () => {
   let activePieceManager: DefaultActivePieceManager;
@@ -24,11 +24,11 @@ describe("when creating a new piece", () => {
       [false, false, false, false],
     ],
   };
-  availablePieces.getRandomPiece.mockImplementation(
-    () => availablePieces.SQUARE
-  );
 
   beforeEach(() => {
+    availablePieces.getRandomPiece.mockImplementation(
+      () => availablePieces.SQUARE
+    );
     activePieceManager = new DefaultActivePieceManager(testBoard);
   });
 
@@ -49,14 +49,14 @@ describe("when creating a new piece", () => {
 
   describe("when the resultant new piece is invalid", () => {
     it("should throw when caused by an invalid anchor", () => {
-      const testAnchor: Coordinates = [0, 4];
+      const testAnchor: Coordinates = [4, 0];
       expect(() => activePieceManager.createNewPiece(testAnchor)).toThrowError(
         "Generated new piece is not in a valid state"
       );
     });
 
     it("should throw when new piece out of bounds", () => {
-      const testAnchor: Coordinates = [0, 3];
+      const testAnchor: Coordinates = [3, 0];
       expect(() => activePieceManager.createNewPiece(testAnchor)).toThrowError(
         "Generated new piece is not in a valid state"
       );
@@ -72,7 +72,7 @@ describe("when creating a new piece", () => {
         ],
       };
       activePieceManager = new DefaultActivePieceManager(newTestBoard);
-      const testAnchor: Coordinates = [0, 2];
+      const testAnchor: Coordinates = [2, 0];
       expect(() => activePieceManager.createNewPiece(testAnchor)).toThrowError(
         "Generated new piece is not in a valid state"
       );

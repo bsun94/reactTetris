@@ -69,6 +69,5 @@ export const AVAILABLE_PIECES = Object.freeze([
 /** Randomly (uniform distribution) returns an available piece. */
 export function getRandomPiece(): TetrisPiece {
   const index = Math.floor(Math.random() * AVAILABLE_PIECES.length);
-  debugger;
   return AVAILABLE_PIECES[index];
 }

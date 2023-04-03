@@ -2,7 +2,7 @@ import {
   Coordinates,
   getRandomPiece,
   TetrisPiece,
-} from "src/common/available_pieces";
+} from "../common/available_pieces";
 import { TetrisBoard } from "../board-renderer/BoardRenderer";
 
 export interface ActivePieceManager {
@@ -144,9 +144,11 @@ export default class DefaultActivePieceManager implements ActivePieceManager {
 
   private isPieceinAllowedState(piece: ActivePiece): boolean {
     const withinBoard = this.isPieceWithinBoardBounds(piece);
+    if (!withinBoard) return false;
     const collidesWithExistingParticles =
       this.doesPieceCollideWithExistingParticles(piece);
-    return withinBoard && !collidesWithExistingParticles;
+    if (collidesWithExistingParticles) return false;
+    return true;
   }
 
   private isPieceWithinBoardBounds(piece: ActivePiece): boolean {
@@ -176,16 +178,16 @@ export default class DefaultActivePieceManager implements ActivePieceManager {
           `Relative coord found in current active piece's body with a component block that is left of the anchor point! Block coords x=${x}, y=${y} (x should never be negative)`
         );
       }
-      if (y > 0) {
+      if (y < 0) {
         throw new Error(
-          `Relative coord found in current active piece's body with a component block that is higher than the anchor point! Block coords x=${x}, y=${y} (y should never be larger than 0)`
+          `Relative coord found in current active piece's body with a component block that is higher than the anchor point! Block coords x=${x}, y=${y} (y should never be smaller than 0)`
         );
       }
 
-      top = Math.max(x, top);
-      bottom = Math.min(x, bottom);
-      left = Math.min(y, left);
-      right = Math.min(y, right);
+      top = Math.min(y, top);
+      bottom = Math.max(y, bottom);
+      left = Math.min(x, left);
+      right = Math.max(x, right);
     }
 
     return {
