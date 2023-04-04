@@ -32,7 +32,7 @@ const LINE: TetrisPiece = {
     [0, 3],
   ],
 };
-const L_SHAPE: TetrisPiece = {
+export const L_SHAPE: TetrisPiece = {
   pieceBody: [
     [0, 0],
     [0, 1],
