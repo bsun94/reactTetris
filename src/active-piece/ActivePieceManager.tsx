@@ -5,36 +5,45 @@ import {
 } from "../common/available_pieces";
 import { TetrisBoard } from "../board-renderer/BoardRenderer";
 
+/**
+ * A component that provides services in managing the tetris piece the user is currently in control
+ * of.
+ */
 export interface ActivePieceManager {
+  currentlyActivePiece: ActivePiece;
+
   /** Creates the new Tetris piece that the piece manager will now work with. */
-  createNewPiece: (anchorPoint: ActivePiece["anchorPoint"]) => ActivePiece;
+  createNewPiece: (anchorPoint: Coordinates) => ActivePiece;
 
   /** Returns null to indicate that the rotation is an illegal move. */
-  rotateLeft: (board: TetrisBoard) => ActivePiece | null;
+  rotateLeft: () => ActivePiece | null;
 
   /** Returns null to indicate that the rotation is an illegal move. */
-  rotateRight: (board: TetrisBoard) => ActivePiece | null;
+  rotateRight: () => ActivePiece | null;
 
   /** Returns null to indicate that the rotation is an illegal move. */
-  moveLeft: (board: TetrisBoard) => ActivePiece | null;
+  moveLeft: () => ActivePiece | null;
 
   /** Returns null to indicate that the rotation is an illegal move. */
-  moveRight: (board: TetrisBoard) => ActivePiece | null;
+  moveRight: () => ActivePiece | null;
 
   /**
    * Represents a normal one-tick drop of a piece in the board. A null returned
    * represents the end of the current piece's lifespan.
    */
-  tickDrop: (board: TetrisBoard) => ActivePiece | null;
+  tickDrop: () => ActivePiece | null;
 
   /**
    * Represents a user-expedited drop of a piece in the board (e.g. by pressing a
    * "down" key). A null returned means the pieces can no longer be dropped (end
    * of lifespan).
    */
-  acceleratedDrop: (board: TetrisBoard) => ActivePiece | null;
+  acceleratedDrop: () => ActivePiece | null;
 }
 
+/**
+ * Object representing the tetris piece the user is currently controlling.
+ */
 export interface ActivePiece extends TetrisPiece {
   /**
    * Coords of the anchor point of Tetris piece. This is always the top-left

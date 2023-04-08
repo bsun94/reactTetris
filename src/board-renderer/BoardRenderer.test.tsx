@@ -1,8 +1,7 @@
-import ReactDOM, { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
+import { act } from "@testing-library/react";
 import { createRoot, Root } from "react-dom/client";
 
-import BoardRenderer, { TetrisBoard } from "./BoardRenderer";
+import BoardRenderer from "./BoardRenderer";
 
 let container: Element | null = null;
 let root: Root | null = null;
@@ -14,9 +13,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  if (!!root) {
-    root.unmount();
-  }
+  act(() => {
+    if (!!root) {
+      root.unmount();
+    }
+  });
 });
 
 it("renders without crashing", () => {
@@ -25,7 +26,9 @@ it("renders without crashing", () => {
     [false, true, false],
     [true, true, true],
   ];
-  root!.render(<BoardRenderer board={testBoard} />);
+  expect(() => {
+    root!.render(<BoardRenderer board={testBoard} />);
+  }).not.toThrow();
 });
 
 it("should render a board with cells filled in at the correct spots", () => {

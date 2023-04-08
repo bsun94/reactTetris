@@ -16,6 +16,7 @@ export interface TetrisPiece {
 /** Tuple of 2 numbers representing the coords of a tetris piece's blocks. */
 export type Coordinates = [number, number];
 
+/** @VisibleForTesting */
 export const SQUARE: TetrisPiece = {
   pieceBody: [
     [0, 0],
@@ -32,6 +33,7 @@ const LINE: TetrisPiece = {
     [0, 3],
   ],
 };
+/** @VisibleForTesting */
 export const L_SHAPE: TetrisPiece = {
   pieceBody: [
     [0, 0],

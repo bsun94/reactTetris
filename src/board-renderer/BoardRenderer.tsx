@@ -14,7 +14,6 @@ export default function BoardRenderer({ board }: TetrisBoard) {
   const numBoardCols = board[0].length ?? 0;
   const numBoardRows = board.length ?? 0;
 
-  const numGridElements = numBoardCols * numBoardRows;
   const gridCells: JSX.Element[] = [];
 
   for (let r = 0; r < numBoardRows; r++) {

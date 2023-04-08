@@ -1,7 +1,3 @@
-import ReactDOM, { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
-import { createRoot, Root } from "react-dom/client";
-
 import DefaultActivePieceManager from "./ActivePieceManager";
 import { Coordinates } from "../common/available_pieces";
 
