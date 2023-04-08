@@ -9,6 +9,8 @@ import { Coordinates } from "../common/available_pieces";
  * The shape of a component that manages various aspects of a tetris game board.
  */
 export interface BoardManager {
+  linesRemovedFromBoard: number;
+
   /**
    * Spawns a new Tetris piece for the user to control.
    *
@@ -120,15 +122,19 @@ export default class DefaultBoardManager implements BoardManager {
 
   private updateTurn() {
     this.pausePieceOperations = true;
+    const rowIndicesToRemove: number[] = [];
     for (let i = 0; i < this.board.board.length; i++) {
-      const isCompleteRow = this.board.board[i].every((val) => val !== false);
+      const isCompleteRow = this.board.board[i].every((val) => !!val);
       if (isCompleteRow) {
-        const [removedArr] = this.board.board.splice(i, 1);
-        const removedArrLen = removedArr.length;
-        this.linesRemovedFromBoardInternal++;
-        this.board.board.unshift(Array(removedArrLen).fill(false));
-        this.initTurn();
+        rowIndicesToRemove.push(i);
       }
     }
+    for (const rowIndex of rowIndicesToRemove) {
+      const [removedArr] = this.board.board.splice(rowIndex, 1);
+      const removedArrLen = removedArr.length;
+      this.linesRemovedFromBoardInternal++;
+      this.board.board.unshift(Array(removedArrLen).fill(false));
+    }
+    this.initTurn();
   }
 }
