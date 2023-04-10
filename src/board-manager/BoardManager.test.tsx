@@ -34,7 +34,7 @@ describe("when initializing a turn", () => {
   });
 
   it("should not affect board state if init not run", () => {
-    defaultBoardManager.accerlatedDrop();
+    defaultBoardManager.movePieceRight();
     const unchangedBoard = [
       [false, false, false, false],
       [false, false, false, false],
@@ -255,22 +255,20 @@ describe("when rotating a piece to the right", () => {
   });
 });
 
-describe("when ticking a piece down", () => {
+describe("when flipping a piece horizontally", () => {
   let defaultBoardManager: BoardManager;
   let testBoard: TetrisBoard;
 
   beforeEach(() => {
     availablePieces.getRandomPiece.mockImplementation(
-      () => availablePieces.SQUARE
+      () => availablePieces.L_SHAPE
     );
     testBoard = {
       board: [
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, false, false],
-        [false, false, true, true],
+        [false, false, false, true],
+        [false, false, false, true],
+        [false, false, false, true],
+        [false, false, false, true],
       ],
     };
   });
@@ -280,108 +278,42 @@ describe("when ticking a piece down", () => {
   });
 
   it("should affected the active piece on the board if valid move", () => {
-    defaultBoardManager = new DefaultBoardManager(testBoard, [0, 0]);
+    defaultBoardManager = new DefaultBoardManager(testBoard, [1, 0]);
     defaultBoardManager.initTurn();
-    defaultBoardManager.tickDrop();
+    defaultBoardManager.flipHorizontally();
     const newBoard = [
-      [false, false, false, false],
-      [true, true, false, false],
-      [true, true, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
       [false, false, true, true],
+      [false, false, true, true],
+      [false, true, true, true],
+      [false, false, false, true],
     ];
     expect(testBoard.board).toEqual(newBoard);
   });
 
-  it("should start a new turn if the active piece cannot be dropped anymore", () => {
-    const testBoard = [
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [true, true, false, false],
+  it("should leave the board unaltered if the move is invalid", () => {
+    const newTestBoard = [
+      [false, false, true, true],
+      [false, false, true, true],
+      [false, false, false, true],
+      [false, false, false, true],
     ];
-    defaultBoardManager = new DefaultBoardManager({ board: testBoard }, [0, 0]);
+    defaultBoardManager = new DefaultBoardManager(
+      { board: newTestBoard },
+      [1, 0]
+    );
     defaultBoardManager.initTurn();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
+    defaultBoardManager.flipHorizontally();
     const newBoard = [
-      [true, true, false, false],
-      [true, true, false, false],
-      [false, false, false, false],
-      [true, true, false, false],
-      [true, true, false, false],
-      [true, true, false, false],
+      [false, true, true, true],
+      [false, true, true, true],
+      [false, true, true, true],
+      [false, false, false, true],
     ];
-    expect(testBoard).toEqual(newBoard);
-  });
-
-  it("should remove a full row, updating count", () => {
-    defaultBoardManager = new DefaultBoardManager(testBoard, [0, 0]);
-    defaultBoardManager.initTurn();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    // Should now start a new turn
-    defaultBoardManager.tickDrop();
-    const newBoard = [
-      [true, true, false, false],
-      [true, true, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [true, true, false, false],
-    ];
-    expect(testBoard.board).toEqual(newBoard);
-    expect(defaultBoardManager.linesRemovedFromBoard).toEqual(1);
-  });
-
-  it("should remove multiple full rows, updating count", () => {
-    const testBoard = [
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, true, true],
-      [false, false, true, true],
-    ];
-    defaultBoardManager = new DefaultBoardManager({ board: testBoard }, [0, 0]);
-    defaultBoardManager.initTurn();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    defaultBoardManager.tickDrop();
-    // Should not update board yet, even though there is already a full row
-    let newBoard = [
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [true, true, false, false],
-      [true, true, true, true],
-      [false, false, true, true],
-    ];
-    expect(testBoard).toEqual(newBoard);
-    defaultBoardManager.tickDrop();
-    // Should now start a new turn
-    defaultBoardManager.tickDrop();
-    newBoard = [
-      [true, true, false, false],
-      [true, true, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
-    ];
-    expect(testBoard).toEqual(newBoard);
-    expect(defaultBoardManager.linesRemovedFromBoard).toEqual(2);
+    expect(newTestBoard).toEqual(newBoard);
   });
 });
 
-describe("when accelerated dropping a piece down", () => {
+describe("when ticking a piece down", () => {
   let defaultBoardManager: BoardManager;
   let testBoard: TetrisBoard;
 

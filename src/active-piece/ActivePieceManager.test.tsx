@@ -294,13 +294,10 @@ describe("when dropping the active piece by a tick", () => {
   });
 });
 
-describe("when dropping the active piece by an accerlerated tick", () => {
+describe("when flipping the active piece over horizontally", () => {
   let activePieceManager: DefaultActivePieceManager;
   const testBoard = {
     board: [
-      [false, false, false, false],
-      [false, false, false, false],
-      [false, false, false, false],
       [false, false, false, false],
       [false, false, false, false],
       [false, false, false, false],
@@ -310,7 +307,7 @@ describe("when dropping the active piece by an accerlerated tick", () => {
 
   beforeEach(() => {
     availablePieces.getRandomPiece.mockImplementation(
-      () => availablePieces.SQUARE
+      () => availablePieces.L_SHAPE
     );
     activePieceManager = new DefaultActivePieceManager(testBoard);
   });
@@ -325,41 +322,50 @@ describe("when dropping the active piece by an accerlerated tick", () => {
       anchorPoint: [1, 0],
       pieceBody: [
         [0, 0],
-        [1, 0],
         [0, 1],
-        [1, 1],
+        [0, 2],
+        [1, 2],
       ],
     });
-    const movedPiece = activePieceManager.acceleratedDrop();
+    const movedPiece = activePieceManager.flipHorizontally();
     expect(movedPiece).toEqual({
-      anchorPoint: [1, 5],
+      anchorPoint: [1, 0],
       pieceBody: [
-        [0, 0],
         [1, 0],
-        [0, 1],
         [1, 1],
+        [1, 2],
+        [0, 2],
       ],
     });
   });
 
   it("should return null if the move is invalid", () => {
-    const starterPiece = activePieceManager.createNewPiece([1, 3]);
+    const modifiedTestBoard = {
+      board: [
+        [false, false, true, true],
+        [false, false, true, true],
+        [false, false, false, true],
+        [false, false, false, true],
+      ],
+    };
+    const activePieceManager = new DefaultActivePieceManager(modifiedTestBoard);
+    const starterPiece = activePieceManager.createNewPiece([1, 0]);
     expect(starterPiece).toEqual({
-      anchorPoint: [1, 3],
+      anchorPoint: [1, 0],
       pieceBody: [
         [0, 0],
-        [1, 0],
         [0, 1],
-        [1, 1],
+        [0, 2],
+        [1, 2],
       ],
     });
-    const movedPiece = activePieceManager.acceleratedDrop();
+    const movedPiece = activePieceManager.flipHorizontally();
     expect(movedPiece).toEqual(null);
   });
 
   it("should throw an error if an active piece does not exist", () => {
     // Do not init a starting piece
-    expect(() => activePieceManager.acceleratedDrop()).toThrowError(
+    expect(() => activePieceManager.flipHorizontally()).toThrowError(
       "Active piece has not yet been set!"
     );
   });

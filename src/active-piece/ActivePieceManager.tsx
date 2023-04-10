@@ -22,6 +22,9 @@ export interface ActivePieceManager {
   rotateRight: () => ActivePiece | null;
 
   /** Returns null to indicate that the rotation is an illegal move. */
+  flipHorizontally: () => ActivePiece | null;
+
+  /** Returns null to indicate that the rotation is an illegal move. */
   moveLeft: () => ActivePiece | null;
 
   /** Returns null to indicate that the rotation is an illegal move. */
@@ -32,13 +35,6 @@ export interface ActivePieceManager {
    * represents the end of the current piece's lifespan.
    */
   tickDrop: () => ActivePiece | null;
-
-  /**
-   * Represents a user-expedited drop of a piece in the board (e.g. by pressing a
-   * "down" key). A null returned means the pieces can no longer be dropped (end
-   * of lifespan).
-   */
-  acceleratedDrop: () => ActivePiece | null;
 }
 
 /**
@@ -58,9 +54,6 @@ interface PieceBoundingBox {
   left: number;
   right: number;
 }
-
-/** How much a piece is dropped when the user pressed down. */
-const ACCELERATED_DROP_CONSTANT = 5;
 
 /**
  * Component that provides support in managing the active piece falling down on
@@ -116,14 +109,6 @@ export default class DefaultActivePieceManager implements ActivePieceManager {
     return this.returnPieceIfAllowed(potentialNewPiece);
   }
 
-  acceleratedDrop(): ActivePiece | null {
-    const { anchorPoint, pieceBody } = this.currentlyActivePiece;
-    const [x, y] = anchorPoint;
-    const newAnchor: [number, number] = [x, y + ACCELERATED_DROP_CONSTANT];
-    const potentialNewPiece = { anchorPoint: newAnchor, pieceBody };
-    return this.returnPieceIfAllowed(potentialNewPiece);
-  }
-
   rotateLeft(): ActivePiece | null {
     const { anchorPoint, pieceBody } = this.currentlyActivePiece;
     const transformedBodyBlocks = this.normalizeRelativeCoords(
@@ -137,6 +122,15 @@ export default class DefaultActivePieceManager implements ActivePieceManager {
     const { anchorPoint, pieceBody } = this.currentlyActivePiece;
     const transformedBodyBlocks = this.normalizeRelativeCoords(
       this.reflectAlongXAxis(this.invertCoords(pieceBody))
+    );
+    const potentialNewPiece = { anchorPoint, pieceBody: transformedBodyBlocks };
+    return this.returnPieceIfAllowed(potentialNewPiece);
+  }
+
+  flipHorizontally(): ActivePiece | null {
+    const { anchorPoint, pieceBody } = this.currentlyActivePiece;
+    const transformedBodyBlocks = this.normalizeRelativeCoords(
+      this.reflectAlongYAxis(pieceBody)
     );
     const potentialNewPiece = { anchorPoint, pieceBody: transformedBodyBlocks };
     return this.returnPieceIfAllowed(potentialNewPiece);
@@ -220,16 +214,26 @@ export default class DefaultActivePieceManager implements ActivePieceManager {
     return false;
   }
 
+  // TODO: is it more user-friendly to just normalize the coords in each of the functions?
+  // Normalized the returned coords from this!
   private invertCoords(
     coords: Array<[number, number]>
   ): Array<[number, number]> {
     return coords.map(([x, y]) => [y, x]);
   }
 
+  // Normalized the returned coords from this!
   private reflectAlongXAxis(
     coords: Array<[number, number]>
   ): Array<[number, number]> {
     return coords.map(([x, y]) => [x, -y]);
+  }
+
+  // Normalized the returned coords from this!
+  private reflectAlongYAxis(
+    coords: Array<[number, number]>
+  ): Array<[number, number]> {
+    return coords.map(([x, y]) => [-x, y]);
   }
 
   /**

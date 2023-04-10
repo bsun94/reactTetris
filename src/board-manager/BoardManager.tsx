@@ -22,7 +22,7 @@ export interface BoardManager {
 
   movePieceRight: () => void;
 
-  accerlatedDrop: () => void;
+  flipHorizontally: () => void;
 
   rotateLeft: () => void;
 
@@ -71,9 +71,9 @@ export default class DefaultBoardManager implements BoardManager {
     this.updateActivePieceOnBoardAfterAction(action, false);
   }
 
-  accerlatedDrop() {
-    const action = () => this.pieceManager.acceleratedDrop();
-    this.updateActivePieceOnBoardAfterAction(action, true);
+  flipHorizontally() {
+    const action = () => this.pieceManager.flipHorizontally();
+    this.updateActivePieceOnBoardAfterAction(action, false);
   }
 
   tickDrop() {
