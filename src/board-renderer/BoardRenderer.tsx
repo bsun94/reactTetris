@@ -1,4 +1,5 @@
 import { wrapCssClassNameWithPrefix } from "../common/string_utils";
+import "./BoardRenderer.css";
 
 /** Structure of a tetris board definition that the board renderer can read. */
 export interface TetrisBoard {
